@@ -1,1 +1,1 @@
-This is the FOSS-Cloud <YOUR-REPO-NAME> repository
+This is the FOSS-Cloud installer repository
