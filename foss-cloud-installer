@@ -1,0 +1,156 @@
+#!/bin/bash
+#
+# Copyright (C) 2012 FOSS-Group
+#                    Germany
+#                    http://www.foss-group.de
+#                    support@foss-group.de
+#
+# Authors:
+#  Christian Affolter <christian.affolter@stepping-stone.ch>
+#  
+# Licensed under the EUPL, Version 1.1 or – as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence");
+# You may not use this work except in compliance with the
+# Licence.
+# You may obtain a copy of the Licence at:
+#
+# http://www.osor.eu/eupl
+#
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
+#
+# 
+#
+
+cat << \EOF >&1
+         __________  __________       ________                __
+        / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /
+       / /_  / / / /\__ \\__ \______/ /   / / __ \/ / / / __  /
+      / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
+     /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
+  
+                                installer v0.9.6                        
+
+                   Copyright (C) 2012 FOSS-Group
+                        http://www.foss-group.de
+EOF
+
+# Font: slant
+
+LIB_DIR="`dirname $0`/lib"
+
+source ${LIB_DIR}/input-output.lib.sh
+source ${LIB_DIR}/device.lib.sh
+
+debug="no"
+
+osbdProjectName="FOSS-Cloud"
+
+osbdMemoryMinimalSpace="4" # 4 GB of total memory is required
+osbdDiskMinimalSpace="130" # 130 GB of total disk space is required
+
+osbdLvmVolumeGroup0="local0"
+osbdLvmVolumeGroup1="local1"
+osbFilesystemLabelPrefix="OSBD"
+osbdRootMount="/mnt/osbd"
+osbdGlusterVolumeName='gluster-volume-01'
+
+osbdStageDir="/mnt/cdrom/stages"
+osbdVmImagesDir="/mnt/cdrom/images"
+osbdVmTemplatesDir="/mnt/cdrom/templates"
+osbdIsoDir="/mnt/cdrom/iso"
+
+osbdVmImageCompressorSuffix="xz"
+osbdVmImageSuffix="qcow2.${osbdVmImageCompressorSuffix}"
+osbdVmTemplatesCompressorSuffix="${osbdVmImageCompressorSuffix}"
+osbdIsoCompressorSuffix="${osbdVmImageCompressorSuffix}"
+
+osbdStage4Tarball="${osbdStageDir}/osbd-stage4.tar.bz2"
+
+osbdVirtualizationDir="${osbdRootMount}/var/virtualization"
+osbdVmRoot="${osbdVirtualizationDir}/vm-persistent/0f83f084-8080-413e-b558-b678e504836e"
+osbdTemplatesRoot="${osbdVirtualizationDir}/vm-templates/5b77d2f6-061f-410c-8ee7-9e61da6f1927"
+osbdIsoRoot="${osbdVirtualizationDir}/iso"
+
+osbdLdapDataDir="${osbdRootMount}/var/lib/openldap-hdb/osbd"
+osbdLibvirtConfigDir="${osbdRootMount}/etc/libvirt"
+
+osbdSeedDir="${osbdRootMount}/var/seed"
+osbdVirtualizationSeedDir="${osbdSeedDir}/virtualization"
+osbdLdapDataSeedDir="${osbdSeedDir}/openldap-hdb/osbd"
+osbdLibvirtConfigSeedDir="${osbdSeedDir}/libvirt"
+
+osbdBootPartitionMagicFile="/osbd-boot-partition.txt"
+
+osbdGrubConfig="${osbdRootMount}/boot/grub/grub.conf"
+
+osbdNetworkDev="eth0"
+osbdNetworkMinimalDevices="2"
+osbdNetworkConfig="${osbdRootMount}/etc/conf.d/net"
+osbdNetworkHostFile="${osbdRootMount}/etc/hosts"
+osbdNetworkHostNameFile="${osbdRootMount}/etc/conf.d/hostname"
+osbdNetworkResolverConfig="${osbdRootMount}/etc/resolv.conf"
+osbdNetworkPostInstallConfigPath="${osbdRootMount}/usr/local/etc/foss-cloud/network.conf"
+osbdNetworkPostInstallConfigValueSeparator=','
+osbdNetworkOpenSSHDaemonConfig="${osbdRootMount}/etc/ssh/sshd_config"
+
+declare -A osbdNetworkDemoSystemVlanId=(
+    [pub]=140
+    [admin]=110
+    [data]=120
+    [int]=130
+    [vmbr]=0
+)
+
+declare -A osbdNetworkDemoSystemDomain=(
+    [pub]="foss-cloud.org"
+    [admin]="admin.foss-cloud.org"
+    [data]="data.foss-cloud.org"
+    [int]="int.foss-cloud.org"
+    [vmbr]="demo.foss-cloud.org"
+)
+
+declare -A osbdNetworkDemoSystemIpAddress=(
+    [pub]="0.0.0.0"
+    [admin]="0.0.0.0"
+    [data]="127.0.0.1"
+    [int]="127.0.0.1"
+    [vmbr]="172.31.255.1"
+)
+
+declare -A osbdNetworkDemoSystemNetmask=(
+    [pub]="0"
+    [admin]="0"
+    [data]="8"
+    [int]="8"
+    [vmbr]="24"
+)
+
+declare -A osbdNetworkDemoSystemBroadcastAddress=(
+    [pub]="255.255.255.255"
+    [admin]="255.255.255.255"
+    [data]="127.255.255.255"
+    [int]="127.255.255.255"
+    [vmbr]="172.31.255.255"
+)
+
+osbdNetworkDemoSystemHostName="foss-cloud-01"
+osbdNetworkDemoSystemDefaultGateway="0.0.0.1"
+
+osbdNodeTypeDemoSystem=1
+osbdNodeTypeVmNode=2
+osbdNodeTypeStorageNode=3
+
+osbdNodeTypeFile="foss-cloud_node-type"
+osbdNodeTypeFilePath="${osbdRootMount}/usr/local/etc/foss-cloud/${osbdNodeTypeFile}"
+
+
+source $LIB_DIR/installer.lib.sh
+
+doOsbdSingleNodeInstall
