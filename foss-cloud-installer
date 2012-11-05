@@ -71,7 +71,7 @@ osbdVmImageSuffix="qcow2.${osbdVmImageCompressorSuffix}"
 osbdVmTemplatesCompressorSuffix="${osbdVmImageCompressorSuffix}"
 osbdIsoCompressorSuffix="${osbdVmImageCompressorSuffix}"
 
-osbdStage4Tarball="${osbdStageDir}/osbd-stage4.tar.bz2"
+osbdStage4Tarball="${osbdStageDir}/foss-cloud-stage4.tar.bz2"
 
 osbdVirtualizationDir="${osbdRootMount}/var/virtualization"
 osbdVmRoot="${osbdVirtualizationDir}/vm-persistent/0f83f084-8080-413e-b558-b678e504836e"
