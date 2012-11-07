@@ -35,7 +35,7 @@ cat << \EOF >&1
       / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
      /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
   
-                                installer v0.9.6                        
+                                installer v0.9.7                        
 
                    Copyright (C) 2012 FOSS-Group
                         http://www.foss-group.de
@@ -96,7 +96,7 @@ osbdNetworkConfig="${osbdRootMount}/etc/conf.d/net"
 osbdNetworkHostFile="${osbdRootMount}/etc/hosts"
 osbdNetworkHostNameFile="${osbdRootMount}/etc/conf.d/hostname"
 osbdNetworkResolverConfig="${osbdRootMount}/etc/resolv.conf"
-osbdNetworkPostInstallConfigPath="${osbdRootMount}/usr/local/etc/foss-cloud/network.conf"
+osbdNetworkPostInstallConfigPath="${osbdRootMount}/etc/foss-cloud/network.conf"
 osbdNetworkPostInstallConfigValueSeparator=','
 osbdNetworkOpenSSHDaemonConfig="${osbdRootMount}/etc/ssh/sshd_config"
 
@@ -148,7 +148,7 @@ osbdNodeTypeVmNode=2
 osbdNodeTypeStorageNode=3
 
 osbdNodeTypeFile="foss-cloud_node-type"
-osbdNodeTypeFilePath="${osbdRootMount}/usr/local/etc/foss-cloud/${osbdNodeTypeFile}"
+osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
 
 
 source $LIB_DIR/installer.lib.sh
