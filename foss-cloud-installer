@@ -35,7 +35,7 @@ cat << \EOF >&1
       / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
      /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
   
-                                installer v0.9.7                        
+                                installer v1.0.4                        
 
                    Copyright (C) 2012 FOSS-Group
                         http://www.foss-group.de
