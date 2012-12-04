@@ -90,16 +90,16 @@ function deviceCreateOsbdPartitionLayout ()
     local device=$1
 
     local commands="mklabel msdos
-                    mkpart primary 1MB 64MB
-                    mkpart primary linux-swap 64MB 4160MB
-                    mkpart primary 4160MB 8256MB
-                    mkpart extended 8256MB -1
-                    mkpart logical 8257MB -1
+                    mkpart primary 1MiB 64MiB
+                    mkpart primary linux-swap 64MiB 4160MiB
+                    mkpart primary 4160MiB 8256MiB
+                    mkpart extended 8256MiB -1
+                    mkpart logical 8257MiB -1
                     set 1 boot on
                     set 5 LVM on
                    "
 
-    $PARTED_CMD -s -- $device $commands
+    $PARTED_CMD --script --align optimal -- $device $commands
     return $?
 }
 
