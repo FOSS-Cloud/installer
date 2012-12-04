@@ -37,6 +37,7 @@ IP_CMD=${IP_CMD:="/sbin/ip"}
 CHROOT_CMD=${CHROOT_CMD:="/bin/chroot"}
 LN_CMD=${LN_CMD:="/bin/ln"}
 RC_UPDATE_CMD=${RC_UPDATE_CMD:="/sbin/rc-update"}
+BASENAME_CMD=${BASENAME_CMD:="/bin/basename"}
 
 LIB_DIR=${LIB_DIR:="`dirname $0`"}
 
@@ -1438,12 +1439,72 @@ function finishMessage ()
     exit 0
 }
 
+function processArguments ()
+{
+    while getopts ":cmsh" option; do
+        case $option in
+	    c )
+	        osbdSkipCpuCheck="yes"
+		debug "Skipping CPU requirement checks"
+		;;
+	    
+	    m )
+	        osbdSkipMemoryCheck="yes"
+		debug "Skipping memory requirement checks"
+		;;
+
+	    s )
+	        osbdSkipCpuCheck="yes"
+		osbdSkipMemoryCheck="yes"
+		debug "Skipping CPU and memory requirement checks"
+		;;
+
+	    h )
+	        printUsage
+		exit 0
+		;;
+	
+	    \? )
+	        error "Invalid option '-${OPTARG}' specified"
+		printUsage
+		die
+		;;
+
+	    : )
+	        error "Missing argument for '-${OPTARG}'"
+		printUsage
+		die
+		;;
+	esac
+    done
+}
+
+function printUsage ()
+{
+    cat << EOF
+Usage: $( ${BASENAME_CMD} "$0" ) [OPTION]...
+
+  -c			Skip CPU requirement checks
+  -m			Skip memory requirement checks
+  -s			Skip both, CPU and memory requirement checks
+  -h			Display this help and exit
+EOF
+}
+
 
 function doOsbdSingleNodeInstall ()
 {
+
     welcomeMessage
-    checkCPU
-    checkAvailableMemory
+
+    if [ "$osbdSkipCpuCheck" != "yes" ]; then
+        checkCPU
+    fi
+
+    if [ "$osbdSkipMemoryCheck" != "yes" ]; then
+        checkAvailableMemory
+    fi
+
     nodeTypeSelection
     deviceSelection
     lvmCleanup

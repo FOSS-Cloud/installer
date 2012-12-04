@@ -28,20 +28,6 @@
 # 
 #
 
-cat << \EOF >&1
-         __________  __________       ________                __
-        / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /
-       / /_  / / / /\__ \\__ \______/ /   / / __ \/ / / / __  /
-      / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
-     /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
-  
-                                installer v1.0.4                        
-
-                   Copyright (C) 2012 FOSS-Group
-                        http://www.foss-group.de
-EOF
-
-# Font: slant
 
 LIB_DIR="`dirname $0`/lib"
 
@@ -152,5 +138,22 @@ osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
 
 
 source $LIB_DIR/installer.lib.sh
+
+processArguments "$@"
+
+cat << \EOF >&1
+         __________  __________       ________                __
+        / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /
+       / /_  / / / /\__ \\__ \______/ /   / / __ \/ / / / __  /
+      / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
+     /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
+  
+                                installer v1.0.4                        
+
+                   Copyright (C) 2012 FOSS-Group
+                        http://www.foss-group.de
+EOF
+
+# Font: slant
 
 doOsbdSingleNodeInstall
