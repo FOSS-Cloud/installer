@@ -37,6 +37,8 @@ source ${LIB_DIR}/device.lib.sh
 debug="no"
 
 osbdProjectName="FOSS-Cloud"
+osbdProgramName="installer"
+osbdProgramVersion="1.0.4"
 
 osbdMemoryMinimalSpace="4" # 4 GB of total memory is required
 osbdDiskMinimalSpace="130" # 130 GB of total disk space is required
@@ -140,20 +142,4 @@ osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
 source $LIB_DIR/installer.lib.sh
 
 processArguments "$@"
-
-cat << \EOF >&1
-         __________  __________       ________                __
-        / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /
-       / /_  / / / /\__ \\__ \______/ /   / / __ \/ / / / __  /
-      / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
-     /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
-  
-                                installer v1.0.4                        
-
-                   Copyright (C) 2012 FOSS-Group
-                        http://www.foss-group.de
-EOF
-
-# Font: slant
-
 doOsbdSingleNodeInstall

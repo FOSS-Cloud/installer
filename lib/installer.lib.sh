@@ -1494,6 +1494,7 @@ EOF
 
 function doOsbdSingleNodeInstall ()
 {
+    fossCloudLogoWithProgramInfo "$osbdProgramName" "$osbdProgramVersion"
 
     welcomeMessage
 
