@@ -1057,7 +1057,7 @@ function readStaticNetworkConfiguration ()
         info ""
         info "Please enter the broadcast IP address"
         info "(usually the last IP address in your network block)"
-        readVarAndValidateIpAddress "broadcastAddress"
+        readVarAndValidateIpAddress "broadcastAddress" "Broadcast IP address"
         osbdNetworkBroadcastAddress[${networkName}]="$broadcastAddress"
         unset broadcastAddress
 
