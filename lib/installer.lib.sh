@@ -38,6 +38,7 @@ CHROOT_CMD=${CHROOT_CMD:="/bin/chroot"}
 LN_CMD=${LN_CMD:="/bin/ln"}
 RC_UPDATE_CMD=${RC_UPDATE_CMD:="/sbin/rc-update"}
 BASENAME_CMD=${BASENAME_CMD:="/bin/basename"}
+PASSWD_CMD=${PASSWD_CMD:="/bin/passwd"}
 
 LIB_DIR=${LIB_DIR:="`dirname $0`"}
 
@@ -744,6 +745,40 @@ function bootLoaderInstallation ()
 
     info ""
     info "Boot loader installation was successful"
+}
+
+function setRootPassword ()
+{
+    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
+        # Skip setting the root password on demo systems, as we use the
+        # default one
+        return 0
+    fi
+
+    header "Set root Password"
+
+    while true; do
+        info "Please enter a new password for the root super user"
+        ${CHROOT_CMD} ${osbdRootMount} ${PASSWD_CMD}
+
+        case $? in
+            0)
+                # password successfully changed, exit
+                return 0
+                ;;
+            10)
+                # passwords do not match, re-ask the user
+                echo ""
+                continue
+                ;;
+
+            *)
+                error "Unable to set the root password (exit code: $?)"
+                info "Default root password '${osbdNodeDefaultRootPassword}' will be used"
+                return $?
+                ;;
+        esac
+    done
 }
 
 function networkDeviceSelection ()
@@ -1522,5 +1557,6 @@ function doOsbdSingleNodeInstall ()
     networkDeviceSelection
     networkConfiguration
     bootLoaderInstallation
+    setRootPassword
     finishMessage
 }

@@ -138,6 +138,8 @@ osbdNodeTypeStorageNode=3
 osbdNodeTypeFile="foss-cloud_node-type"
 osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
 
+osbdNodeDefaultRootPassword="admin"
+
 
 source $LIB_DIR/installer.lib.sh
 
