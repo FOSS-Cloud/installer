@@ -1178,6 +1178,7 @@ slaves_bond0="${osbdNetworkDevices[*]}"
 lacp_rate_bond0="fast"
 miimon_bond0="100"
 mode_bond0="802.3ad"
+carrier_timeout_bond0="15"
  
 config_bond0="null"
 
