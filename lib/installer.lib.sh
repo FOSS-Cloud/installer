@@ -1022,6 +1022,8 @@ function readNetworkDefaultGateway ()
     header "Network Default Gateway Configuration"
     info "Please enter the IP address of your default gateway"
     info "(usually the first IP address in your pub network"
+
+    unset osbdNetworkDefaultGateway
     readVarAndValidateIpAddress "osbdNetworkDefaultGateway"
 }
 
