@@ -1323,7 +1323,8 @@ EOF
 
     if [ ${osbdNodeType} -eq ${osbdNodeTypeVmNode} ]; then
         # Add the vlan pub interface to the bridge
-        echo "bridge_vmbr0=\"vlan${vlanId}\"" >> $osbdNetworkConfig 
+        echo "bridge_vmbr0=\"vlan${vlanId}\""     >> $osbdNetworkConfig 
+        echo "bridge_add_vlan${vlanId}=\"vmbr0\"" >> $osbdNetworkConfig
 
     elif [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
         # Create an empty isolated bridge on demo systems
