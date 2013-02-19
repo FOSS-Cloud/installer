@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2012 FOSS-Group
+# Copyright (C) 2013 FOSS-Group
 #                    Germany
 #                    http://www.foss-group.de
 #                    support@foss-group.de
@@ -78,7 +78,6 @@ osbdBootPartitionMagicFile="/osbd-boot-partition.txt"
 
 osbdGrubConfig="${osbdRootMount}/boot/grub/grub.conf"
 
-osbdNetworkDev="eth0"
 osbdNetworkMinimalDevices="2"
 osbdNetworkConfig="${osbdRootMount}/etc/conf.d/net"
 osbdNetworkHostFile="${osbdRootMount}/etc/hosts"
@@ -132,8 +131,9 @@ osbdNetworkDemoSystemHostName="foss-cloud-01"
 osbdNetworkDemoSystemDefaultGateway="0.0.0.1"
 
 osbdNodeTypeDemoSystem=1
-osbdNodeTypeVmNode=2
-osbdNodeTypeStorageNode=3
+osbdNodeTypeSingleServer=2
+osbdNodeTypeVmNode=3
+osbdNodeTypeStorageNode=4
 
 osbdNodeTypeFile="foss-cloud_node-type"
 osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
@@ -144,4 +144,4 @@ osbdNodeDefaultRootPassword="admin"
 source $LIB_DIR/installer.lib.sh
 
 processArguments "$@"
-doOsbdSingleNodeInstall
+doFossCloudNodeInstall

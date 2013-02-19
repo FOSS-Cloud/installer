@@ -127,22 +127,32 @@ function checkAvailableMemory ()
 function nodeTypeSelection ()
 {
     header "Node Type Selection"
-    info "The Installer supports three different types of nodes:"
+    info "The Installer supports four different types of servers:"
     info ""
     info "-  The Demo-System which lets you quickly install and test the"
-    info "   ${osbdProjectName} on a single machine"
+    info "   ${osbdProjectName} on a single machine without any further network"
+    info "   requirements."
     info ""
-    info "-  The VM-Node which runs the virtual machines"
+    info "-  The Single-Server which runs the whole ${osbdProjectName} on"
+    info "   a single physical server, without any high availability."
     info ""
-    info "-  The Storage-Node which holds all data images of the virtual machines"
+    info "-  The VM-Node which hosts the virtual machines in a multi node setup"
+    info "   (requires at least four physical servers)."
     info ""
-    info "Please enter the number of the node type you would like to install"
+    info "-  The Storage-Node which serves the images of the virtual machines"
+    info "   in a multi node setup (requires at least four physical servers)."
+    info ""
+    info "Please enter the number of the server type you would like to install"
     info "${osbdNodeTypeDemoSystem}) Demo-System"
-    info "${osbdNodeTypeVmNode}) VM-Node"
-    info "${osbdNodeTypeStorageNode}) Storage-Node"
+    info "${osbdNodeTypeSingleServer}) Single-Server"
+    info "${osbdNodeTypeVmNode}) VM-Node (multi node setup)"
+    info "${osbdNodeTypeStorageNode}) Storage-Node (multi node setup)"
      
     readVarAndValidateInList "osbdNodeType" "Node type" \
-        "${osbdNodeTypeDemoSystem} ${osbdNodeTypeStorageNode} ${osbdNodeTypeVmNode}"
+                             "${osbdNodeTypeDemoSystem} 
+                              ${osbdNodeTypeSingleServer}
+                              ${osbdNodeTypeStorageNode}
+                              ${osbdNodeTypeVmNode}"
 }
 
 
@@ -502,7 +512,11 @@ function lvmOsVolumesSetup ()
     createLvmOsbdVolume "1G"   "tmp"     "$osbdLvmVolumeGroup0"
     createLvmOsbdVolume "1G"   "portage" "$osbdLvmVolumeGroup0"
 
-    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
+    # Demo-Systems and Single-Server installations will store the VM images
+    # on the local OS disk in the LVM virtualization volume
+    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} -o \
+         ${osbdNodeType} -eq ${osbdNodeTypeSingleServer} ]
+    then
         createLvmOsbdVolumeSizeInExtends \
             "100%FREE" "virtualization" "$osbdLvmVolumeGroup0"
     fi
@@ -551,7 +565,7 @@ function filesystemSetup ()
     createOsbdFilesystem "var"     "/dev/${osbdLvmVolumeGroup0}/var"
 
     case "${osbdNodeType}" in
-        ${osbdNodeTypeDemoSystem})
+        ${osbdNodeTypeDemoSystem}|${osbdNodeTypeSingleServer})
             createOsbdFilesystem "virtual" \
                 "/dev/${osbdLvmVolumeGroup0}/virtualization"
         ;;
@@ -597,7 +611,7 @@ function mountPartitions ()
     mountOsbdPartition "portage" "${osbdRootMount}/usr/portage" 
 
     case "${osbdNodeType}" in
-        ${osbdNodeTypeDemoSystem})
+        ${osbdNodeTypeDemoSystem}|${osbdNodeTypeSingleServer})
             mountOsbdPartition "virtual" "${osbdRootMount}/var/virtualization"
             ;;
 
@@ -637,6 +651,10 @@ function setNodeType ()
     case "${osbdNodeType}" in
         ${osbdNodeTypeDemoSystem})
             local nodeTypeName='demo'
+        ;;
+
+        ${osbdNodeTypeSingleServer})
+            local nodeTypeName='single'
         ;;
 
         ${osbdNodeTypeStorageNode})
@@ -686,7 +704,9 @@ LABEL=OSBD_home     /home                 xfs      noatime,nodev                
 LABEL=OSBD_portage  /usr/portage          xfs      noatime,nodev,nosuid,noexec  0 2
 EOF
 
-    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
+    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} -o \
+         ${osbdNodeType} -eq ${osbdNodeTypeSingleServer} ]
+    then
         debug "Creating fstab entry: /var/virtualization"
 
         cat << EOF >> "${fstabPath}"
@@ -789,20 +809,59 @@ function networkDeviceSelection ()
     declare -a availableDevices
     local availableDevices=( `deviceListAllEthernetInterfaces` )
 
-    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
-        # one network card is sufficient for demo systems
-        osbdNetworkMinimalDevices=1
-    else
-        info "Two or more ethernet network interfaces are required"
-        info "Both devices will be aggregated (bonded) to one logical link"
-    fi
-
     if [ ${#availableDevices[@]} -eq 0 ]; then
         error "No ethernet devices are available"
         error "Please insert ethernet interface cards and restart the installer"
         die
     fi
-    
+
+    case "${osbdNodeType}" in
+        ${osbdNodeTypeDemoSystem})
+            # one network card is sufficient for demo systems, they also don't
+            # use bonding and VLANs
+            osbdNetworkMinimalDevices=1
+            osbdNetworkUseBonding="no"
+            osbdNetworkUseVlan="no"
+            ;;
+
+        ${osbdNodeTypeSingleServer})
+            # Single-Server installations use VLAN interfaces and have optional
+            # bonding support.
+            osbdNetworkUseVlan="yes"
+
+            if [ ${#availableDevices[@]} -eq 1 ]; then
+               # Only one network interface present, bonding is not possible
+               info "You have only one network interface present."
+               info "Link aggregation (bonding) won't be possible"
+               osbdNetworkMinimalDevices=1
+               osbdNetworkUseBonding="no"
+            else
+                info "You can either use one single network interface, or at your"
+                info "option, multiple interfaces which will be aggregated (bonded)"
+                info "to one logical link."
+                info "If you don't know what link aggregation is or if your switch"
+                info "doesn't support IEEE 802.3ad (dynamic link aggregation) answer"
+                info "the following question with 'no'"
+                info ""
+                info "Would you like to use dynamic link aggregation (bonding)?"
+                if yesInput; then
+                    osbdNetworkUseBonding="yes"
+                else
+                    osbdNetworkMinimalDevices=1
+                    osbdNetworkUseBonding="no"
+                fi
+            fi
+            ;;
+
+        *)
+            # VM and storage nodes always require bonding
+            osbdNetworkUseBonding="yes"
+            osbdNetworkUseVlan="yes"
+            info "Two or more ethernet network interfaces are required"
+            info "All devices will be aggregated (bonded) to one logical link"
+            ;;
+    esac
+
     if [ ${#availableDevices[@]} -lt ${osbdNetworkMinimalDevices} ]; then
         local additionalDevices=$(( ${osbdNetworkMinimalDevices} - ${#availableDevices[@]} ))
         error "Only ${#availableDevices[@]} ethernet device(s) present"
@@ -823,11 +882,11 @@ function networkDeviceSelection ()
 
 
     info ""
-    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
-        info "Please enter the device which you would like to use"
-    else
+    if [ "${osbdNetworkUseBonding}" = "yes" ]; then
         info "Please enter the devices which you would like to add to the"
-        info "link aggregation group"
+        info "link aggregation group (bonding)"
+    else
+        info "Please enter the device which you would like to use"
     fi
 
     info ""
@@ -842,8 +901,9 @@ function networkDeviceSelection ()
         availableDevices=( ${availableDevices[*]/${nic}/} )
         unset nic
 
-        if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
-            # one interface is enough for demo systems
+        if [ "${osbdNetworkUseBonding}" = "no" ]; then
+            # one interface is enough for demo systems or single-server
+            # installations without bonding
             break
         fi
 
@@ -914,7 +974,7 @@ function networkConfiguration ()
 
         if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
             # On demo system only ask for a pub network configuration as the
-            # other networks were pre-defined with pseudo values befor.
+            # other networks were pre-defined with pseudo values before.
             readStaticNetworkConfiguration 'pub'
         else 
             # On all other node types the user has to provide the required
@@ -1119,8 +1179,8 @@ function writeDynamicNetworkConfiguration ()
     cat << EOF > $osbdNetworkConfig
 #-----------------------------------------------------------------------------
 # Physical interfaces
-config_${osbdNetworkDev}="dhcp"
-dhcp_${osbdNetworkDev}="nontp nonis"
+config_${osbdNetworkDevices[0]}="dhcp"
+dhcp_${osbdNetworkDevices[0]}="nontp nonis"
 EOF
 
     if test $? -ne 0; then
@@ -1135,14 +1195,16 @@ function writeStaticNetworkConfiguration ()
 {
     writeStaticNetworkPhysicalConfiguration
 
-    if [ ${osbdNodeType} -ne ${osbdNodeTypeDemoSystem} ]; then
-        # Configure bonding and VLANs only on vm- and storage-nodes
+    if [ "${osbdNetworkUseBonding}" = "yes" ]; then
         writeStaticNetworkBondingConfiguration
+    fi
+
+    if [ "${osbdNetworkUseVlan}" = "yes" ]; then 
         writeStaticNetworkVlanConfiguration
     fi
 
     if [ ${osbdNodeType} -ne ${osbdNodeTypeStorageNode} ]; then
-        # Configure bridging only on vm- and demo-nodes
+        # Configure bridging only on vm-, demo-nodes and single-server
         writeStaticNetworkBridgingConfiguration
     fi
 
@@ -1159,6 +1221,7 @@ function writeStaticNetworkPhysicalConfiguration ()
     cat << EOF > $osbdNetworkConfig
 #-----------------------------------------------------------------------------
 # Physical interfaces
+
 EOF
 
     if test $? -ne 0; then
@@ -1171,7 +1234,7 @@ EOF
     for physicalInterface in ${osbdNetworkDevices[@]}; do
         addNetworkInitSymlink "${physicalInterface}"
 
-        echo "#physical interface #${i}" >> $osbdNetworkConfig
+        echo "# physical interface #${i}" >> $osbdNetworkConfig
 
         if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
             # On demo-systems add the pub network configuration to the first
@@ -1193,7 +1256,7 @@ EOF
 
         else
             # All other nodes use the physical interface as a bonding member
-            # port, so no IP configuration will be done.
+            # port, or as a VLAN interface, so no IP configuration will be done.
             echo "config_${physicalInterface}=\"null\""   >> $osbdNetworkConfig
         fi
 
@@ -1233,13 +1296,21 @@ EOF
 
 function writeStaticNetworkVlanConfiguration ()
 {
-    # Create VLAN interfaces on top of the bonding interface
+    # Create VLAN interfaces on top of the VLAN trunk interface, which is either
+    # the bonding interface or on single-server installations without bonding,
+    # the first physical interface.
+    local vlanInterface="bond0"
+
+    if [ "${osbdNetworkUseBonding}" = "no" ]; then
+        local vlanInterface="${osbdNetworkDevices[0]}"
+    fi
+
     cat << EOF >> $osbdNetworkConfig
 
 #-----------------------------------------------------------------------------
 # VLAN (802.1q support)
  
-vlans_bond0="${osbdNetworkVlanId[*]}"
+vlans_${vlanInterface}="${osbdNetworkVlanId[*]}"
 
 EOF
 
@@ -1256,23 +1327,26 @@ EOF
         local domain=${osbdNetworkDomain[${network}]}
         local host=${osbdNetworkHostName}
 
-        echo "#${network} VLAN"                          >> $osbdNetworkConfig
+        echo "# ${network} VLAN"                         >> $osbdNetworkConfig
         echo "vlan${vlanId}_name=\"vlan${vlanId}\""      >> $osbdNetworkConfig
 
 
-        if [ "$network" = "pub" -a ${osbdNodeType} -eq ${osbdNodeTypeVmNode} ]
+        if [ "$network" = "pub" ] && \
+             [ ${osbdNodeType} -eq ${osbdNodeTypeVmNode} -o \
+               ${osbdNodeType} -eq ${osbdNodeTypeSingleServer} ]
         then
-            # VM nodes have the pub vlan bridged with vmbr0, so no
-            # configuration will be done on the vlan interface
+            # VM nodes and single-server installations have the pub
+            # vlan bridged with vmbr0, so no configuration will be done
+            # on the vlan interface
             echo "config_vlan${vlanId}=\"null\"" >> $osbdNetworkConfig
         else
             echo "config_vlan${vlanId}=\"${ip}/${mask} brd ${brd}\"" \
-                >> $osbdNetworkConfig
+                 >> $osbdNetworkConfig
         fi
 
-        if [ "$network" = "pub" \
-             -a ${osbdNodeType} -eq ${osbdNodeTypeStorageNode} ]
-        then
+        if [ "$network" = "pub" -a \
+             ${osbdNodeType} -eq ${osbdNodeTypeStorageNode} ]
+        then    
             # Append the default gateway to the public network.
             # VM nodes will have it on the bridging interface
             # (see below) and not directly on the VLAN interface.
@@ -1301,16 +1375,20 @@ function writeStaticNetworkBridgingConfiguration ()
 
 #-----------------------------------------------------------------------------
 # Bridging (802.1d) interfaces
+
 EOF
     if test $? -ne 0; then
         error "Unable to write the network configuration to $osbdNetworkConfig"
         die
     fi
 
-    if [ ${osbdNodeType} -eq ${osbdNodeTypeVmNode} ]; then
-        local network='pub'
+    # On vm-nodes and single-server installations use the 'pub' network
+    # configuration for the bridging interface
+    local network='pub'
 
-    elif [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
+    if [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
+        # On demo systems, use the isolated pre-defined 'vmbr' network
+        # configuration for the bridging interface
         local network='vmbr'
     fi 
 
@@ -1321,19 +1399,20 @@ EOF
     local gw=${osbdNetworkDefaultGateway}
 
 
-    if [ ${osbdNodeType} -eq ${osbdNodeTypeVmNode} ]; then
-        # Add the vlan pub interface to the bridge
+    if [ ${osbdNodeType} -ne ${osbdNodeTypeDemoSystem} ]; then
+        # Add the vlan pub interface to the bridge on vm-nodes and
+        # single-server installations
         echo "bridge_vmbr0=\"vlan${vlanId}\""     >> $osbdNetworkConfig 
         echo "bridge_add_vlan${vlanId}=\"vmbr0\"" >> $osbdNetworkConfig
-
-    elif [ ${osbdNodeType} -eq ${osbdNodeTypeDemoSystem} ]; then
+    else
         # Create an empty isolated bridge on demo systems
         echo 'brctl_vmbr0=""' >> $osbdNetworkConfig
     fi
 
     echo "config_vmbr0=\"${ip}/${mask} brd ${brd}\"" >> $osbdNetworkConfig 
 
-    if [ ${osbdNodeType} -eq ${osbdNodeTypeVmNode} ]; then
+    if [ ${osbdNodeType} -ne ${osbdNodeTypeDemoSystem} ]; then
+        # Only set a default route on vm-nodes and single-server installations
         echo "routes_vmbr0=\"default via ${gw}\"" >> $osbdNetworkConfig
     fi
 
@@ -1468,7 +1547,7 @@ function finishMessage ()
 {
     header "Installation Complete"
 
-    info "Congratulation you have finished the installation of ${osbdProjectName}"
+    info "Congratulation! You have finished the installation of ${osbdProjectName}"
     info "Now all you need to do is reboot the system and remove the CD-ROM"
     info ""
     info "Do you want to reboot your system?"
@@ -1533,7 +1612,7 @@ EOF
 }
 
 
-function doOsbdSingleNodeInstall ()
+function doFossCloudNodeInstall ()
 {
     fossCloudLogoWithProgramInfo "$osbdProgramName" "$osbdProgramVersion"
 
