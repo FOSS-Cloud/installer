@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2012 FOSS Group
+# Copyright (C) 2013 FOSS Group
 #                    Germany
 #                    http://www.foss-group.de
 #                    support@foss-group.de
@@ -129,7 +129,7 @@ function nodeTypeSelection ()
     header "Node Type Selection"
     info "The Installer supports three different types of nodes:"
     info ""
-    info "-  The Single-Server which lets you quickly install and test the"
+    info "-  The Demo-System which lets you quickly install and test the"
     info "   ${osbdProjectName} on a single machine"
     info ""
     info "-  The VM-Node which runs the virtual machines"
@@ -137,7 +137,7 @@ function nodeTypeSelection ()
     info "-  The Storage-Node which holds all data images of the virtual machines"
     info ""
     info "Please enter the number of the node type you would like to install"
-    info "${osbdNodeTypeDemoSystem}) Single-Server"
+    info "${osbdNodeTypeDemoSystem}) Demo-System"
     info "${osbdNodeTypeVmNode}) VM-Node"
     info "${osbdNodeTypeStorageNode}) Storage-Node"
      
