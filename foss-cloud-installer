@@ -131,9 +131,8 @@ osbdNetworkDemoSystemHostName="foss-cloud-01"
 osbdNetworkDemoSystemDefaultGateway="0.0.0.1"
 
 osbdNodeTypeDemoSystem=1
-osbdNodeTypeSingleServer=2
-osbdNodeTypeVmNode=3
-osbdNodeTypeStorageNode=4
+osbdNodeTypeVmNode=2
+osbdNodeTypeStorageNode=3
 
 osbdNodeTypeFile="foss-cloud_node-type"
 osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
