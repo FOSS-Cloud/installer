@@ -133,6 +133,7 @@ osbdNetworkDemoSystemDefaultGateway="0.0.0.1"
 osbdNodeTypeDemoSystem=1
 osbdNodeTypeVmNode=2
 osbdNodeTypeStorageNode=3
+osbdNodeTypeSingleServer=9
 
 osbdNodeTypeFile="foss-cloud_node-type"
 osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
