@@ -38,7 +38,7 @@ debug="no"
 
 osbdProjectName="FOSS-Cloud"
 osbdProgramName="installer"
-osbdProgramVersion=1.2.5
+osbdProgramVersion=1.2.6
 
 osbdMemoryMinimalSpace="4" # 4 GB of total memory is required
 osbdDiskMinimalSpace="130" # 130 GB of total disk space is required
@@ -131,9 +131,9 @@ osbdNetworkDemoSystemHostName="foss-cloud-01"
 osbdNetworkDemoSystemDefaultGateway="0.0.0.1"
 
 osbdNodeTypeDemoSystem=1
-osbdNodeTypeVmNode=2
-osbdNodeTypeStorageNode=3
-osbdNodeTypeSingleServer=9
+osbdNodeTypeSingleServer=2
+osbdNodeTypeVmNode=3
+osbdNodeTypeStorageNode=4
 
 osbdNodeTypeFile="foss-cloud_node-type"
 osbdNodeTypeFilePath="${osbdRootMount}/etc/foss-cloud/${osbdNodeTypeFile}"
