@@ -15,7 +15,7 @@
 # Licence.
 # You may obtain a copy of the Licence at:
 #
-# http://www.osor.eu/eupl
+# https://joinup.ec.europa.eu/software/page/eupl
 #
 # Unless required by applicable law or agreed to in
 # writing, software distributed under the Licence is
@@ -127,11 +127,14 @@ function checkAvailableMemory ()
 function nodeTypeSelection ()
 {
     header "Node Type Selection"
-    info "The Installer supports three different types of servers:"
+    info "The Installer supports four different types of servers:"
     info ""
     info "-  The Demo-System which lets you quickly install and test the"
     info "   ${osbdProjectName} on a single machine without any further network"
     info "   requirements."
+    info ""
+    info "-  The Single-Server which runs the whole ${osbdProjectName} on"
+    info "   a single physical server, without any high availability."
     info ""
     info "-  The VM-Node which hosts the virtual machines in a multi node setup"
     info "   (requires at least four physical servers)."
@@ -141,11 +144,13 @@ function nodeTypeSelection ()
     info ""
     info "Please enter the number of the server type you would like to install"
     info "${osbdNodeTypeDemoSystem}) Demo-System"
+    info "${osbdNodeTypeSingleServer}) Single-Server"
     info "${osbdNodeTypeVmNode}) VM-Node (multi node setup)"
     info "${osbdNodeTypeStorageNode}) Storage-Node (multi node setup)"
      
     readVarAndValidateInList "osbdNodeType" "Node type" \
                              "${osbdNodeTypeDemoSystem} 
+                              ${osbdNodeTypeSingleServer}
                               ${osbdNodeTypeStorageNode}
                               ${osbdNodeTypeVmNode}"
 }
