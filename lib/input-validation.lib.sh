@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2012 FOSS Group
+# Copyright (C) 2013 FOSS Group
 #                    Germany
 #                    http://www.foss-group.de
 #                    support@foss-group.de
