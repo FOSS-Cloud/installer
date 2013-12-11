@@ -7,6 +7,7 @@
 #
 # Authors:
 #  Christian Affolter <christian.affolter@stepping-stone.ch>
+#  Beat Stebler <beat.stebler@foss-group.ch>
 #  
 # Licensed under the EUPL, Version 1.1 or – as soon they
 # will be approved by the European Commission - subsequent
