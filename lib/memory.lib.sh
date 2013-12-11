@@ -1,12 +1,13 @@
 #!/bin/bash
 #
-# Copyright (C) 2012 FOSS Group
+# Copyright (C) 2013 FOSS Group
 #                    Germany
 #                    http://www.foss-group.de
 #                    support@foss-group.de
 #
 # Authors:
 #  Christian Affolter <christian.affolter@stepping-stone.ch>
+#  Beat Stebler <beat.stebler@foss-group.ch>
 #  
 # Licensed under the EUPL, Version 1.1 or – as soon they
 # will be approved by the European Commission - subsequent
