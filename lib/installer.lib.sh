@@ -34,7 +34,7 @@ MOUNT_CMD=${MOUNT_CMD:="/bin/mount"}
 TAR_CMD=${TAR_CMD:="/bin/tar"}
 REBOOT_CMD=${REBOOT_CMD:="/sbin/reboot"}
 XZ_CMD=${XZ_CMD:="/usr/bin/xz"}
-IP_CMD=${IP_CMD:="/sbin/ip"}
+IP_CMD=${IP_CMD:="/bin/ip"}
 CHROOT_CMD=${CHROOT_CMD:="/bin/chroot"}
 LN_CMD=${LN_CMD:="/bin/ln"}
 RC_UPDATE_CMD=${RC_UPDATE_CMD:="/sbin/rc-update"}
