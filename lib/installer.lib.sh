@@ -1639,7 +1639,7 @@ function doFossCloudNodeInstall ()
     fstabCreation
     networkDeviceSelection
     networkConfiguration
-    bootLoaderInstallation
     setRootPassword
+    bootLoaderInstallation
     finishMessage
 }
