@@ -508,10 +508,10 @@ function lvmVolumeGroupSetup ()
 
 function lvmOsVolumesSetup ()
 {
-    createLvmOsbdVolume "500M" "home"    "$osbdLvmVolumeGroup0"
-    createLvmOsbdVolume "3G"   "var"     "$osbdLvmVolumeGroup0"
+    createLvmOsbdVolume "1G"   "home"    "$osbdLvmVolumeGroup0"
+    createLvmOsbdVolume "6G"   "var"     "$osbdLvmVolumeGroup0"
     createLvmOsbdVolume "1G"   "tmp"     "$osbdLvmVolumeGroup0"
-    createLvmOsbdVolume "1G"   "portage" "$osbdLvmVolumeGroup0"
+    createLvmOsbdVolume "2G"   "portage" "$osbdLvmVolumeGroup0"
 
     # Demo-Systems and Single-Server installations will store the VM images
     # on the local OS disk in the LVM virtualization volume
