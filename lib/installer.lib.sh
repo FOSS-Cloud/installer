@@ -499,7 +499,7 @@ function lvmVolumeGroupSetup ()
         die
     fi
 
-    if ! $LVM_VGCREATE_CMD "$volumeGroup" "${devicePath}";
+    if ! $LVM_VGCREATE_CMD -ff "$volumeGroup" "${devicePath}";
     then
         error "Unable to create the LVM volume group '$volumeGroup'"
         die
