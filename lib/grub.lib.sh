@@ -52,6 +52,8 @@ function grubSetup ()
 {
     local rootPartition="$1"
     local setupPartition="$2"
+    echo "Root partition = ${rootPartition} line 54 in grub.lib.sh"
+    echo "Setup partition = ${setupPartition} line 55 in grub.lib.sh"
 
     echo -e "root ${rootPartition}\nsetup ${setupPartition}\nquit" | \
         $GRUB_CMD --batch 2>&1 | grep --color=never "Error"

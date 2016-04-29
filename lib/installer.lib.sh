@@ -745,6 +745,7 @@ function bootLoaderInstallation ()
 
     info "Detecting the grub boot partition name"
     local bootPartition=`grubDetectBootPartition "$osbdBootPartitionMagicFile"`
+    echo "${bootPartition} line 748 in installer.lib.ch"
     if test $? -ne 0; then 
         error "Unable to detect the grub boot partition name"
         die
