@@ -74,7 +74,7 @@ osbdVirtualizationSeedDir="${osbdSeedDir}/virtualization"
 osbdLdapDataSeedDir="${osbdSeedDir}/openldap-hdb/osbd"
 osbdLibvirtConfigSeedDir="${osbdSeedDir}/libvirt"
 
-osbdBootPartitionMagicFile="/osbd-boot-partition.txt"
+osbdBootPartitionMagicFile="osbd-boot-partition.txt"
 
 osbdGrubConfig="${osbdRootMount}/boot/grub/grub.conf"
 
