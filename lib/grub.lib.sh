@@ -36,7 +36,7 @@ function grubDetectBootPartition ()
 {
     local searchFilePath="$1"
 
-    local bootPartition=`echo "find $searchFilePath" | \
+    local bootPartition=`echo "find -name $searchFilePath" | \
         $GRUB_CMD --batch --no-floppy 2>/dev/null | \
 	grep -E '^ \(hd[0-9],[0-9]\)$'`
 
