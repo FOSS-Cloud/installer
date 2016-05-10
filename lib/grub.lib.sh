@@ -43,7 +43,7 @@ function grubDetectBootPartition ()
 	local bootPartition=$(df `find -name $searchFilePath` | \
 		cut -d " " -f1 | \
 		grep /dev/ | \
-		cut -d "/" -f2)
+		cut -d "/" -f3)
 		echo "Zeile 46 in grub.lib.sh BootPartition = $bootPartition"
 		
     if test -z "$bootPartition"; then
