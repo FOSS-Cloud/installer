@@ -40,7 +40,7 @@ function grubDetectBootPartition ()
     #     $GRUB_CMD --batch --no-floppy 2>/dev/null | \
 	# grep -E '^ \(hd[0-9],[0-9]\)$'`
 
-	local bootPartition=$(df 'find -name $searchFilePath' | \
+	local bootPartition=$(df `find -name $searchFilePath` | \
 		cut -d " " -f1 | \
 		grep /dev/)
 		echo "Zeile 46 in grub.lib.sh BootPartition = $bootPartition"
