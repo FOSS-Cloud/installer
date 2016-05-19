@@ -35,6 +35,7 @@ CAT_CMD=${CAT_CMD:="/bin/cat"}
 function fossCloudLogo ()
 {
     # Font: slant
+    clear
     cat << \EOF >&1
          __________  __________       ________                __
         / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /
