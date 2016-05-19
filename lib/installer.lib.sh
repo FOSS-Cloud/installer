@@ -423,6 +423,9 @@ function lvmCleanup ()
                 error "Unable to wipe the LVM label on device '${pv}'"
                 die
             fi
+            if [ -d /dev/local0 ]; then
+                rm -rf /dev/local0
+            fi
         done
     done
 }
