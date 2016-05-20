@@ -45,11 +45,40 @@ function filesystemCreate ()
         local force=""
     fi
 
+	if [ "$filesystemType" = "ext4" ]; then
+		local force = ""
+	fi
 
     ${FILESYSTEM_MKFS_CMD}.${filesystemType} \
         $force -L "${lable}" "$device" > /dev/null
 
     return $?
+}
+
+function filesystemCreateFat ()
+{
+    local lable="$1"
+    local device="$2"
+    local force="$3"
+
+    filesystemCreate "ext4" "$lable" "$device" "$force"
+
+    return $?
+}
+
+function createOsbdFilesystemFAT ()
+{
+     local label="${osbFilesystemLabelPrefix}_$1"
+     local device="$2"
+
+     debug "Creating filesystem for device '${device}' with label '${label}'"
+
+     if ! filesystemCreateFat "$label" "$device" ""; then
+         error "Unable to create FAT filesystem on ${device}"
+         die
+     fi
+     
+     return $?
 }
 
 function filesystemCreateXfs ()

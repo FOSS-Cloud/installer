@@ -560,13 +560,14 @@ function filesystemSetup ()
         error "Unable to create swap on ${osbdSwapDevice}"
         die
     fi
-
-    createOsbdFilesystem "boot"    "${osbdInstallDevicePath}1"
-    createOsbdFilesystem "root"    "${osbdInstallDevicePath}3"
-    createOsbdFilesystem "home"    "/dev/${osbdLvmVolumeGroup0}/home"
-    createOsbdFilesystem "portage" "/dev/${osbdLvmVolumeGroup0}/portage"
-    createOsbdFilesystem "tmp"     "/dev/${osbdLvmVolumeGroup0}/tmp"
-    createOsbdFilesystem "var"     "/dev/${osbdLvmVolumeGroup0}/var"
+	
+	createOsbdFilesystemFAT "boot"    "${osbdInstallDevicePath}1"
+    # createOsbdFilesystem    "boot"    "${osbdInstallDevicePath}1"
+    createOsbdFilesystem    "root"    "${osbdInstallDevicePath}3"
+    createOsbdFilesystem    "home"    "/dev/${osbdLvmVolumeGroup0}/home"
+    createOsbdFilesystem    "portage" "/dev/${osbdLvmVolumeGroup0}/portage"
+    createOsbdFilesystem    "tmp"     "/dev/${osbdLvmVolumeGroup0}/tmp"
+    createOsbdFilesystem    "var"     "/dev/${osbdLvmVolumeGroup0}/var"
 
     case "${osbdNodeType}" in
         ${osbdNodeTypeDemoSystem}|${osbdNodeTypeSingleServer})
