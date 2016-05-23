@@ -1031,7 +1031,7 @@ function setupPredictableNetworkInterfaceNames ()
 {
 	if test "$(ls -A "/mnt/osbd/etc/udev/rules.d/")"; then
 		rm /mnt/osbd/etc/udev/rules.d/*
-		cp /mnt/osbd/lib/udev/rules.d/80-net-setup-link.rules /etc/udev/rules.d/
+		cp /mnt/osbd/lib/udev/rules.d/80-net-setup-link.rules /mnt/osbd/etc/udev/rules.d/
 	fi
 }
 
