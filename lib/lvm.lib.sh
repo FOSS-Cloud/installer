@@ -59,7 +59,7 @@ function lvmCreateVolume ()
     local name="$2"
     local volumeGroup="$3"
 
-    $LVM_LVCREATE_CMD --size "$size" --name "$name" "$volumeGroup"
+    yes | $LVM_LVCREATE_CMD --size "$size" --name "$name" "$volumeGroup"
     return $?
 }
 
@@ -81,7 +81,7 @@ function lvmCreateVolumeSizeInExtends ()
     local name="$2"
     local volumeGroup="$3"
 
-    $LVM_LVCREATE_CMD --extents "$extents" --name "$name" "$volumeGroup"
+    yes | $LVM_LVCREATE_CMD --extents "$extents" --name "$name" "$volumeGroup"
     return $?
 }
 

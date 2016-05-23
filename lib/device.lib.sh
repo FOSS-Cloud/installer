@@ -122,7 +122,7 @@ function deviceListAllEthernetInterfaces ()
    local regexFilter=$1
 
    if test -z $regexFilter; then
-       regexFilter='^eth[0-9]+$'
+       regexFilter='^e[0-9]*'
    fi
 
    ls $DEVICE_SYS_CLASS_NET_PATH | grep --color=never -E $regexFilter

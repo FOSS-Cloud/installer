@@ -46,7 +46,7 @@ function filesystemCreate ()
     fi
 
 	if [ "$filesystemType" = "ext4" ]; then
-		local force = ""
+		local force=""
 	fi
 
     ${FILESYSTEM_MKFS_CMD}.${filesystemType} \
