@@ -48,7 +48,7 @@ function fossCloudLogoWithProgramInfo ()
     local programName="${1:-"`getFossCloudNodeType`-node"}"
     local version="${2:-"`getFossCloudVersion`"}"
 
-    local width=0
+    local width=10
 
     local title="${programName} v${version}"
     local copyright="Copyright (C) 2010 - `${DATE_CMD} +%Y` FOSS-Group"
