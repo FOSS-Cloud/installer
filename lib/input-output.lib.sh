@@ -34,6 +34,7 @@ CAT_CMD=${CAT_CMD:="/bin/cat"}
 
 function fossCloudLogo ()
 {
+	clear
 	echo -e "\e[1;34m"
 	echo '             __________  __________       ________                __'
 	echo '            / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /'
