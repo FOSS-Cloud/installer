@@ -1317,7 +1317,7 @@ function writeStaticNetworkVlanConfiguration ()
     local vlanInterface="bond0"
 
     if [ "${osbdNetworkUseBonding}" = "no" ]; then
-        local vlanInterface="${osbdNetworkDevices[0]}"
+        local vlanInterface="${osbdNetworkDevices[1]}"
     fi
 
     cat << EOF >> $osbdNetworkConfig
