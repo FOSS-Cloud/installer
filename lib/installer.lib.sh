@@ -1268,6 +1268,8 @@ EOF
                 >> $osbdNetworkConfig
 
             writeHostFileEntry "${ip}  ${host}.${domain} ${host}"
+            
+            addServiceToRunLevel "net.${physicalInterface}"
 
         else
             # All other nodes use the physical interface as a bonding member
@@ -1317,7 +1319,8 @@ function writeStaticNetworkVlanConfiguration ()
     local vlanInterface="bond0"
 
     if [ "${osbdNetworkUseBonding}" = "no" ]; then
-        local vlanInterface="${osbdNetworkDevices[1]}"
+        local vlanInterface="${osbdNetworkDevices[0]}"
+        addServiceToRunLevel "net.${osbdNetworkDevices[0]}"
     fi
 
     cat << EOF >> $osbdNetworkConfig
