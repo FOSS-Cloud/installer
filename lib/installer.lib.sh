@@ -964,6 +964,7 @@ function networkConfiguration ()
             osbdNetworkDefaultGateway="${osbdNetworkDemoSystemDefaultGateway}"
             writeDynamicNetworkConfiguration
             writeStaticNetworkBridgingConfiguration
+			setupPredictableNetworkInterfaceNames
             return 0
         else
             info "OK, you will have to configure your network manually"
@@ -1203,6 +1204,8 @@ EOF
         die
     fi
 
+	addNetworkInitSymlink "${osbdNetworkDevices[0]}"
+    addServiceToRunLevel "net.${osbdNetworkDevices[0]}"
     writePostInstallNetworkConfig
 }
 
